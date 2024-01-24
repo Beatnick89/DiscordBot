@@ -9,7 +9,7 @@ from discord.ext import commands
 from requests import get
 from responses import get_response
 from jokes import get_joke
-from emojidb2 import emojis
+from emojidb import emojis
 
 # Token loader
 load_dotenv()
@@ -55,7 +55,7 @@ atexit.register(save_target_channel_ids)
 @bot.command(name='create_voice', help='Create a join-to-create voice channel (Admin Only)')
 async def create_voice(ctx):
     try:
-        admin_role = discord.utils.get(ctx.guild.roles, name='admin')
+        admin_role = discord.utils.get(ctx.guild.roles, name='Admin')
         if admin_role and admin_role in ctx.author.roles:
             voice_category = discord.utils.get(ctx.guild.categories, name='Voice Channels')
             channel_name = f"{TARGET_CHANNEL_NAME}"
@@ -88,7 +88,7 @@ async def on_disconnect():
 #Pin Function
 @bot.command(name='pin', help='Pin eine Nachricht')
 async def pin_message(ctx, *args):
-    admin_role = discord.utils.get(ctx.guild.roles, name='admin')  # Replace 'Admin' with your actual admin role name
+    admin_role = discord.utils.get(ctx.guild.roles, name='Admin')  # Replace 'Admin' with your actual admin role name
     if admin_role and admin_role in ctx.author.roles:
         message_content = ' '.join(args)
         await ctx.message.delete()
@@ -103,13 +103,10 @@ async def pin_message(ctx, *args):
 
 # Insert new function here
 
-# Aus Nachrichten Embed erstellen
-
-
 #Voteing Funktion
 @bot.command(name='vote', help='Erstelle eine Abstimmungsnachricht')
 async def vote(ctx, title, option1, option2):
-    admin_role = discord.utils.get(ctx.guild.roles, name='admin')
+    admin_role = discord.utils.get(ctx.guild.roles, name='Admin')
     if admin_role and admin_role in ctx.author.roles:
         embed = discord.Embed(title=title, color=discord.Color.blue())
         embed.add_field(name='Option 1', value=option1, inline=False)
@@ -123,7 +120,6 @@ async def vote(ctx, title, option1, option2):
         await ctx.send("Du hast nicht die passenden Rechte")
 
     await ctx.message.delete()
-
 
 #Move LootCouncil
 @bot.command(name='council', help='Move members with "council" role to a specific channel')
@@ -149,13 +145,11 @@ async def council(ctx):
     else:
         await ctx.send("Du bist kein Mitglied vom  Councils.")
 
-#TicTacToe mit Buttons
-
-
 #Roll reaction Function
 role_embed_message_id = None
 @bot.command(name='role')
 async def role(ctx):
+    admin_role = discord.utils.get(ctx.guild.roles, name='Admin')
     global role_embed_message_id
 
     if "admin" in [role.name.lower() for role in ctx.author.roles]:
@@ -226,7 +220,6 @@ def get_adminhelp_embed(ctx):
     help_embed.set_author(name="Tech Bot", icon_url=ctx.bot.user.avatar)
     help_embed.add_field(name="role", value="platziert Role Embed (bitte nicht  nutzen)", inline=False)
     help_embed.add_field(name="pin", value="!pin <Hier die Nachricht die gepinnt werden soll>", inline=False)
-    help_embed.add_field(name="embed", value="!embed <Hier der Titel> <Hier die beschreibung>", inline=False)
     help_embed.add_field(name="council", value="Ruft das Loot Council zusammen nur nutzbar als Council Mitglied", inline=False)
     help_embed.add_field(name="vote", value='!voting "Voting Title" "Option 1" "Option 2"', inline=False)
     help_embed.add_field(name="create_voice", value="Erstellt Join to create Channel", inline=False)
@@ -237,7 +230,7 @@ def get_adminhelp_embed(ctx):
 @bot.command(name='adminhelp', help='Display custom admin help information')
 async def adminhelp_command(ctx):
     # Check if the user has the admin role
-    admin_role = discord.utils.get(ctx.guild.roles, name='admin')  # Replace 'admin' with your actual admin role name
+    admin_role = discord.utils.get(ctx.guild.roles, name='Admin')  # Replace 'admin' with your actual admin role name
     if admin_role and admin_role in ctx.author.roles:
         adminhelp_embed = get_adminhelp_embed(ctx)
         await ctx.send(embed=adminhelp_embed)
